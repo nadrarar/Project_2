@@ -8,10 +8,10 @@ extern double elapsed_time;
 extern double total_time;
 
 glm::vec3 quadVertexArray[4]={
-	glm::vec3(-1.0f, -1.0f, 0.0f),
-	glm::vec3(1.0f, -1.0f, 0.0f),
-	glm::vec3(1.0f, 1.0f, 0.0f),
-	glm::vec3(-1.0f, 1.0f, 0.0f)
+	glm::vec3(-1.0f, -1.0f, 1.0f),
+	glm::vec3(1.0f, -1.0f, 1.0f),
+	glm::vec3(1.0f, 1.0f, 1.0f),
+	glm::vec3(-1.0f, 1.0f, 1.0f)
 };
 GLuint quadIndexArray[4]={0,1,3,2};
 	
@@ -57,7 +57,7 @@ void MainWindow::RenderIntoFrameBuffer(){
 		, scaleVec);
 	glm::mat3 normal_matrix = glm::inverse(glm::transpose(glm::mat3(modelview_matrix)));
 	glm::mat4 mvp_matrix = projection_matrix * modelview_matrix;
-
+	
 	glPolygonMode(GL_FRONT_AND_BACK, this->wireframe ? GL_LINE : GL_FILL);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
@@ -151,23 +151,34 @@ void MainWindow::RenderIntoFrameBuffer(){
 
 
 void MainWindow::DrawQuadScreen(int width,int height,GLuint texHandle){
-	this->ClearWindow(fbo.size.x, fbo.size.y);
+	/*
+	this->ClearWindow(width,height);
+	float theta = ((float) this->x2) / ((float) width) * 360.0f;
+	float rho = ((float) this->y2) / ((float) width) * 360.0f;
+	glm::mat4 projection_matrix = glm::ortho(-1.0f,1.0f,-1.0f,1.0f);
+	camera_position=glm::vec3(0.0f, 0.0f, 5.5f);
+	glm::mat4 modelview_matrix = glm::scale(glm::rotate(glm::rotate(glm::lookAt(
+		camera_position, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f))
+		, theta,glm::vec3(0.0f,1.0f,0.0f))
+		, rho, glm::vec3(1.0f,0.0f,0.0f))
+		, glm::vec3(1.0f,1.0f,1.0f));
+	glm::mat4 mvp_matrix = projection_matrix * modelview_matrix;
+	glUniformMatrix4fv(shader->mvp_handle, 1, GL_FALSE, glm::value_ptr(mvp_matrix));
+
 	//this->DisplayWindowName("Texture 2",this->width,this->height);
-	//float time = float(glutGet(GLUT_ELAPSED_TIME)) / 1000.0f;
 	this->shader=&this->vertex_shader;
 	shader->Use();
 	glBindVertexArray(this->vertex_array_quad_handle);
 	glDrawElements(GL_TRIANGLE_STRIP , 4, GL_UNSIGNED_INT , quadIndexArray);
 	glBindVertexArray(0);
 	glUseProgram(0);
-	/*
+	*/
+	this->ClearWindow(width,height);
 	float theta = ((float) this->x2) / ((float) width) * 360.0f;
 	float rho = ((float) this->y2) / ((float) width) * 360.0f;
 	
-	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_LIGHTING);
-
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, 1, 10);
@@ -199,7 +210,6 @@ void MainWindow::DrawQuadScreen(int width,int height,GLuint texHandle){
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
-	*/
 }
 void MainWindow::UseFramebufferToDrawSomething(){
 	//fbo.Bind(1);
